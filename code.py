@@ -9,13 +9,11 @@ import os
 from typing import List, Dict, Any, Optional
 import time
 
-# Configuration - replace with your own API keys
 REDDIT_CLIENT_ID = 'your_reddit_client_id'
 REDDIT_CLIENT_SECRET = 'your_reddit_client_secret'
 REDDIT_USER_AGENT = 'UserPersonaScraper/1.0 by yourusername'
 OPENAI_API_KEY = 'your_openai_api_key'
 
-# Initialize APIs
 reddit = praw.Reddit(
     client_id=REDDIT_CLIENT_ID,
     client_secret=REDDIT_CLIENT_SECRET,
@@ -25,7 +23,6 @@ reddit = praw.Reddit(
 openai.api_key = OPENAI_API_KEY
 
 def get_redditor_from_url(url: str) -> Optional[Redditor]:
-    """Extract Redditor object from profile URL"""
     try:
         username = url.strip('/').split('/')[-1]
         if username.startswith('user/'):
@@ -36,14 +33,12 @@ def get_redditor_from_url(url: str) -> Optional[Redditor]:
         return None
 
 def scrape_user_content(redditor: Redditor, limit: int = 100) -> Dict[str, List[Dict]]:
-    """Scrape user's posts and comments"""
     content = {
         'posts': [],
         'comments': []
     }
     
     try:
-        # Get posts
         for submission in redditor.submissions.new(limit=limit):
             content['posts'].append({
                 'title': submission.title,
@@ -58,7 +53,6 @@ def scrape_user_content(redditor: Redditor, limit: int = 100) -> Dict[str, List[
         print(f"Error scraping posts: {e}")
     
     try:
-        # Get comments
         for comment in redditor.comments.new(limit=limit):
             content['comments'].append({
                 'text': comment.body,
@@ -74,8 +68,6 @@ def scrape_user_content(redditor: Redditor, limit: int = 100) -> Dict[str, List[
     return content
 
 def analyze_content_with_llm(content: Dict) -> Dict:
-    """Use LLM to analyze content and generate persona"""
-    # Prepare text for LLM
     text_samples = []
     
     for post in content['posts']:
